@@ -1,0 +1,12 @@
+desc: Ping
+runners:
+  req: http://localhost:8080
+
+steps:
+  ping:
+    req:
+      /ping:
+        get: {}
+    test: |
+      current.res.status == 200 &&
+      current.res.body.message == "pong"
