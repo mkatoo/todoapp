@@ -1,0 +1,10 @@
+desc: Cleanup DB
+runners:
+  db: postgres://postgres:password@localhost:5432/todoapp?sslmode=disable
+
+steps:
+  cleanup:
+    db:
+      query: |
+        DELETE FROM users;
+        DELETE FROM todos;

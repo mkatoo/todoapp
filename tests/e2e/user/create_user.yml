@@ -1,0 +1,28 @@
+desc: Create User
+runners:
+  req: http://localhost:8080
+
+vars:
+  user:
+    name: "Jane Doe"
+    email: "jane.doe@example.com"
+    password: "password123"
+
+steps:
+  cleanup:
+    desc: Cleanup DB
+    include: ../utils/cleanup.yml
+
+  create_user:
+    req:
+      /users:
+        post:
+          body:
+            application/json:
+              name: "{{ vars.user.name }}"
+              email:  "{{ vars.user.email }}"
+              password: "{{ vars.user.password }}"
+    test: |
+      current.res.status == 201 &&
+      current.res.body.name == vars.user.name &&
+      current.res.body.email == vars.user.email
