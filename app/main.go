@@ -32,5 +32,8 @@ func main() {
 
 	handlers.RegisterUserHandler(router, db)
 
-	router.Run(":8080")
+	err = router.Run(":8080")
+	if err != nil {
+		panic("failed to start server")
+	}
 }
