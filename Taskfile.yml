@@ -3,6 +3,12 @@
 version: '3'
 
 tasks:
+  default:
+    desc: List all tasks
+    cmds:
+      - go tool task --list
+    silent: true
+
   lint:
     desc: Run golangci-lint
     cmds:
