@@ -14,6 +14,7 @@ steps:
     include: ../utils/cleanup.yml
 
   create_user:
+    desc: Create User (success)
     req:
       /users:
         post:
@@ -26,3 +27,17 @@ steps:
       current.res.status == 201 &&
       current.res.body.name == vars.user.name &&
       current.res.body.email == vars.user.email
+
+  create_user_duplicate:
+    desc: Create User (user already exists)
+    req:
+      /users:
+        post:
+          body:
+            application/json:
+              name: "{{ vars.user.name }}"
+              email:  "{{ vars.user.email }}"
+              password: "{{ vars.user.password }}"
+    test: |
+      current.res.status == 400 &&
+      current.res.body.error == "user already exists"

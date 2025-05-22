@@ -32,9 +32,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid email format"
+      required:
+        - error
     User:
       type: object
       properties:

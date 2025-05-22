@@ -20,7 +20,7 @@ tasks:
     cmds:
       - go tool golangci-lint run
 
-  test:e2e:
-    desc: Run end-to-end tests
+  test:api:
+    desc: Run API tests
     cmds:
       - go tool runn run --scopes read:parent ./tests/e2e/*.yml
