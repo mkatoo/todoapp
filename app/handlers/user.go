@@ -4,15 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mkatoo/todoapp/app/api"
 	"github.com/mkatoo/todoapp/app/models"
 	"gorm.io/gorm"
 )
-
-type CreateUserRequest struct {
-	Name     string `json:"name" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
 
 func RegisterUserHandler(router *gin.Engine, db *gorm.DB) {
 	router.GET("/users", func(c *gin.Context) {
@@ -21,10 +16,18 @@ func RegisterUserHandler(router *gin.Engine, db *gorm.DB) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
 			return
 		}
-		c.JSON(http.StatusOK, users)
+		var usersResponse []api.User
+		for _, user := range users {
+			usersResponse = append(usersResponse, api.User{
+				Id:    int(user.ID),
+				Name:  user.Name,
+				Email: user.Email,
+			})
+		}
+		c.JSON(http.StatusOK, usersResponse)
 	})
 	router.POST("/users", func(c *gin.Context) {
-		var request CreateUserRequest
+		var request api.UserCreateRequest
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 			return
@@ -38,6 +41,11 @@ func RegisterUserHandler(router *gin.Engine, db *gorm.DB) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 			return
 		}
-		c.JSON(http.StatusCreated, user)
+		userResponse := api.User{
+			Id:    int(user.ID),
+			Name:  user.Name,
+			Email: user.Email,
+		}
+		c.JSON(http.StatusCreated, userResponse)
 	})
 }

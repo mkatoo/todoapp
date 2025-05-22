@@ -9,6 +9,12 @@ tasks:
       - go tool task --list
     silent: true
 
+  generate:
+    desc: Generate Code from OpenAPI spec
+    cmds:
+      - go tool oapi-codegen -config config.yml openapi.yml
+    silent: true
+
   lint:
     desc: Run golangci-lint
     cmds:
