@@ -1,2 +1,3 @@
 steps:
   - include: user/create_user.yml
+  - include: user/get_users.yml

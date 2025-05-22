@@ -1,0 +1,10 @@
+desc: Create User on DB
+runners:
+  db: postgres://postgres:password@localhost:5432/todoapp?sslmode=disable
+
+steps:
+  create_user:
+    db:
+      query: |
+        INSERT INTO users (name, email, hashed_password)
+        VALUES ('{{ vars.name }}', '{{ vars.email }}', '{{ vars.hashed_password }}');

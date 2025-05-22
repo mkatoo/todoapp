@@ -1,0 +1,32 @@
+desc: Get Users
+runners:
+  req: http://localhost:8080
+
+vars:
+  user:
+    name: "John Doe"
+    email: "john.doe@example.com"
+    password: "password123"
+
+steps:
+  cleanup:
+    desc: Cleanup DB
+    include: ../utils/cleanup.yml
+
+  create_user:
+    desc: Create User on DB
+    include:
+      path: ../utils/create_user.yml
+      vars:
+        name: "{{ vars.user.name }}"
+        email: "{{ vars.user.email }}"
+        hashed_password: "{{ vars.user.password }}"
+
+  get_users:
+    req:
+      /users:
+        get: {}
+    test: |
+      current.res.status == 200 &&
+      current.res.body[0].name == vars.user.name &&
+      current.res.body[0].email == vars.user.email
