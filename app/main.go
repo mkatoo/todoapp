@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mkatoo/todoapp/app/handlers"
+	"github.com/mkatoo/todoapp/app/middlewares/accesslog"
 	"github.com/mkatoo/todoapp/app/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -24,6 +25,8 @@ func main() {
 	}
 
 	router := gin.Default()
+	router.Use(accesslog.AccessLogMiddleware())
+
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
