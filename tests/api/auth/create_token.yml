@@ -23,7 +23,7 @@ steps:
         password: "{{ vars.user.password }}"
 
   get_token:
-    desc: Get Token with creatiopn
+    desc: Get Token
     req:
       /auth:
         post:
