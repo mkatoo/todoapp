@@ -1,0 +1,3 @@
+steps:
+  - include: auth/create_token.yml
+  - include: auth/existing_token.yml

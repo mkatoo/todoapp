@@ -1,0 +1,11 @@
+desc: Create Token on DB
+runners:
+  db: postgres://postgres:password@localhost:5432/todoapp?sslmode=disable
+
+if: included
+steps:
+  create_token:
+    db:
+      query: |
+        INSERT INTO tokens (user_id, token)
+          VALUES (CAST('{{ vars.user_id }}' AS INTEGER), '{{ vars.token }}');

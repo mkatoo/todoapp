@@ -2,6 +2,7 @@ desc: Create User on DB
 runners:
   db: postgres://postgres:password@localhost:5432/todoapp?sslmode=disable
 
+if: included
 steps:
   create_user:
     db:

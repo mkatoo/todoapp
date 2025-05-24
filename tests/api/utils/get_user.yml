@@ -1,0 +1,14 @@
+desc: Get User from DB
+runners:
+  db: postgres://postgres:password@localhost:5432/todoapp?sslmode=disable
+
+if: included
+steps:
+  get_user:
+    db:
+      query: |
+        SELECT id, name, email
+        FROM users
+        WHERE email = '{{ vars.email }}';
+    bind:
+      users: current.rows
