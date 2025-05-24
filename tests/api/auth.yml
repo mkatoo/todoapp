@@ -1,3 +1,4 @@
 steps:
   - include: auth/create_token.yml
   - include: auth/existing_token.yml
+  - include: auth/wrong_password.yml

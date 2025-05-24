@@ -7,10 +7,12 @@ vars:
     - name: "Jane Doe"
       email: "jane.doe@example.com"
       password: "password123"
+      hashed_password: "$2a$10$/S0PaAs.5gkXcihuO51xC.pQUT/W76EyC3KoTmouhA7kDPjt5.qTS"
       token: "token123"
     - name: "John Doe"
       email: "john.doe@example.com"
       password: "password456"
+      hashed_password: "$2a$10$iUgdsrQx9UQRC4RjAvcj8.HkLlWeL44TYJfo27/UdwIEgddSIjh62"
       token: "token456"
   tasks:
     - content: "Buy groceries"
@@ -31,7 +33,7 @@ steps:
       vars:
         name: "{{ vars.users[i].name }}"
         email: "{{ vars.users[i].email }}"
-        password: "{{ vars.users[i].password }}"
+        hashed_password: "{{ vars.users[i].hashed_password }}"
 
   get_user0_id:
     desc: Get User 0 from DB

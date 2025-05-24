@@ -7,6 +7,7 @@ vars:
     name: "Jane Doe"
     email: "jane.doe@example.com"
     password: "password123"
+    hashed_password: "$2a$10$/S0PaAs.5gkXcihuO51xC.pQUT/W76EyC3KoTmouhA7kDPjt5.qTS" # bcrypt hash for "password123"
   token:
     token: "token"
 
@@ -22,7 +23,7 @@ steps:
       vars:
         name: "{{ vars.user.name }}"
         email: "{{ vars.user.email }}"
-        password: "{{ vars.user.password }}"
+        hashed_password: "{{ vars.user.hashed_password }}"
 
   get_user_id:
     desc: Get User from DB
