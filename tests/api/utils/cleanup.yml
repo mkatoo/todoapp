@@ -7,6 +7,6 @@ steps:
   cleanup:
     db:
       query: |
-        DELETE FROM users;
         DELETE FROM tokens;
-        DELETE FROM todos;
+        DELETE FROM tasks;
+        DELETE FROM users;

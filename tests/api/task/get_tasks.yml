@@ -1,0 +1,108 @@
+desc: Get Tasks
+runners:
+  req: http://localhost:8080
+
+vars:
+  users:
+    - name: "Jane Doe"
+      email: "jane.doe@example.com"
+      password: "password123"
+      token: "token123"
+    - name: "John Doe"
+      email: "john.doe@example.com"
+      password: "password456"
+      token: "token456"
+  tasks:
+    - content: "Buy groceries"
+      completed: false
+    - content: "Clean the house"
+      completed: true
+
+steps:
+  cleanup:
+    desc: Cleanup DB
+    include: ../utils/cleanup.yml
+
+  create_users:
+    desc: Create Users on DB
+    loop: len(vars.users)
+    include:
+      path: ../utils/create_user.yml
+      vars:
+        name: "{{ vars.users[i].name }}"
+        email: "{{ vars.users[i].email }}"
+        password: "{{ vars.users[i].password }}"
+
+  get_user0_id:
+    desc: Get User 0 from DB
+    include:
+      path: ../utils/get_user.yml
+      vars:
+        email: "{{ vars.users[0].email }}"
+    test: len(current.users) == 1
+    bind:
+      user0_id: current.users[0].id
+
+  get_user1_id:
+    desc: Get User 1 from DB
+    include:
+      path: ../utils/get_user.yml
+      vars:
+        email: "{{ vars.users[1].email }}"
+    test: len(current.users) == 1
+    bind:
+      user1_id: current.users[0].id
+
+  create_user0_token:
+    desc: Create Token 0 on DB
+    include:
+      path: ../utils/create_token.yml
+      vars:
+        user_id: "{{ user0_id }}"
+        token: "{{ vars.users[0].token }}"
+
+  create_user1_token:
+    desc: Create Token 1 on DB
+    include:
+      path: ../utils/create_token.yml
+      vars:
+        user_id: "{{ user1_id }}"
+        token: "{{ vars.users[1].token }}"
+
+  create_user0_tasks:
+    desc: Create Tasks on DB
+    loop: len(vars.tasks)
+    include:
+      path: ../utils/create_task.yml
+      vars:
+        user_id: "{{ user0_id }}"
+        content: "{{ vars.tasks[i].content }}"
+        completed: "{{ vars.tasks[i].completed }}"
+
+  get_user0_tasks:
+    desc: Get Tasks (success)
+    req:
+      /tasks:
+        get:
+          headers:
+            Authorization: "Bearer {{ vars.users[0].token }}"
+    bind:
+      tasks: current.res.body
+    test: |
+      current.res.status == 200 &&
+      len(tasks) == len(vars.tasks) &&
+      tasks[0].content == vars.tasks[0].content &&
+      tasks[0].completed == vars.tasks[0].completed &&
+      tasks[1].content == vars.tasks[1].content &&
+      tasks[1].completed == vars.tasks[1].completed
+
+  get_user1_tasks:
+    desc: Get Tasks But No Tasks (success)
+    req:
+      /tasks:
+        get:
+          headers:
+            Authorization: "Bearer {{ vars.users[1].token }}"
+    test: |
+      current.res.status == 200 &&
+      len(current.res.body) == 0

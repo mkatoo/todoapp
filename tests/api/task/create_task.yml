@@ -1,0 +1,60 @@
+desc: Create Task
+runners:
+  req: http://localhost:8080
+
+vars:
+  user:
+    name: "Jane Doe"
+    email: "jane.doe@example.com"
+    password: "password123"
+  token:
+    token: "token"
+  task:
+    content: "Buy groceries"
+
+steps:
+  cleanup:
+    desc: Cleanup DB
+    include: ../utils/cleanup.yml
+
+  create_user:
+    desc: Create User on DB
+    include:
+      path: ../utils/create_user.yml
+      vars:
+        name: "{{ vars.user.name }}"
+        email: "{{ vars.user.email }}"
+        password: "{{ vars.user.password }}"
+
+  get_user_id:
+    desc: Get User from DB
+    include:
+      path: ../utils/get_user.yml
+      vars:
+        email: "{{ vars.user.email }}"
+    test: len(current.users) == 1
+    bind:
+      user_id: current.users[0].id
+
+  create_token:
+    desc: Create Token on DB
+    include:
+      path: ../utils/create_token.yml
+      vars:
+        user_id: "{{ user_id }}"
+        token: "{{ vars.token.token }}"
+
+  create_task:
+    desc: Create Task (success)
+    req:
+      /tasks:
+        post:
+          headers:
+            Authorization: "Bearer {{ vars.token.token }}"
+          body:
+            application/json:
+              content: "{{ vars.task.content }}"
+    test: |
+      current.res.status == 201 &&
+      current.res.body.content == vars.task.content &&
+      current.res.body.completed == false

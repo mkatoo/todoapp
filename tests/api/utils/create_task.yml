@@ -1,0 +1,13 @@
+desc: Create Task on DB
+runners:
+  db: postgres://postgres:password@localhost:5432/todoapp?sslmode=disable
+
+if: included
+steps:
+  create_task:
+    db:
+      query: |
+        INSERT INTO tasks (user_id, content, completed)
+        VALUES (CAST('{{ vars.user_id }}' AS INTEGER), '{{ vars.content }}', '{{ vars.completed }}');
+    bind:
+      tasks: current.rows
