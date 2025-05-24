@@ -2,6 +2,7 @@ package accesslog
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"log/slog"
 	"os"
@@ -20,6 +21,10 @@ func AccessLogMiddleware() gin.HandlerFunc {
 		body, _ := io.ReadAll(tee)
 		c.Request.Body = io.NopCloser(&buf)
 
+		// Parse the request body
+		var requestBody map[string]interface{}
+		_ = json.Unmarshal(body, &requestBody)
+
 		// Process request
 		c.Next()
 
@@ -30,7 +35,7 @@ func AccessLogMiddleware() gin.HandlerFunc {
 			slog.String("path", c.Request.URL.Path),
 			slog.Duration("duration", time.Duration(end.Sub(start))),
 			slog.Int("status", c.Writer.Status()),
-			slog.String("body", string(body)),
+			slog.Any("body", requestBody),
 		)
 	}
 }
