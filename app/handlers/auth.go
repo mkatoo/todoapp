@@ -22,7 +22,7 @@ func RegisterAuthHandler(router *gin.Engine, db *gorm.DB) {
 			return
 		}
 		if !exists {
-			c.JSON(http.StatusBadRequest, api.Error{Error: "user does not exist"})
+			c.JSON(http.StatusUnauthorized, api.Error{Error: "user does not exist"})
 			return
 		}
 
@@ -31,6 +31,11 @@ func RegisterAuthHandler(router *gin.Engine, db *gorm.DB) {
 			c.JSON(http.StatusInternalServerError, api.Error{Error: "failed to fetch user"})
 			return
 		}
+		if !user.CheckPassword(request.Password) {
+			c.JSON(http.StatusUnauthorized, api.Error{Error: "invalid credentials"})
+			return
+		}
+
 		token, err := models.FindOrCreateToken(db, user.ID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, api.Error{Error: "failed to generate token"})
