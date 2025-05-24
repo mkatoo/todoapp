@@ -23,4 +23,4 @@ tasks:
   test:api:
     desc: Run API tests
     cmds:
-      - go tool runn run --scopes read:parent ./tests/e2e/*.yml
+      - go tool runn run --scopes read:parent ./tests/api/*.yml
