@@ -38,7 +38,7 @@ func NewUser(name, email, password string) (*User, error) {
 	return user, nil
 }
 
-func IsExists(db *gorm.DB, email string) (bool, error) {
+func IsUserExists(db *gorm.DB, email string) (bool, error) {
 	var user User
 	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {

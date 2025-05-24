@@ -38,6 +38,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /auth:
+    post:
+      summary: Authenticate a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -73,5 +95,22 @@ components:
           type: string
       required:
         - name
+        - email
+        - password
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    AuthRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
         - email
         - password

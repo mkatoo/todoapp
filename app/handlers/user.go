@@ -32,7 +32,7 @@ func RegisterUserHandler(router *gin.Engine, db *gorm.DB) {
 			c.JSON(http.StatusBadRequest, api.Error{Error: "invalid input"})
 			return
 		}
-		exists, err := models.IsExists(db, request.Email)
+		exists, err := models.IsUserExists(db, request.Email)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, api.Error{Error: "failed to check user existence"})
 			return
