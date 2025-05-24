@@ -35,6 +35,7 @@ func AccessLogMiddleware() gin.HandlerFunc {
 			slog.String("path", c.Request.URL.Path),
 			slog.Duration("duration", time.Duration(end.Sub(start))),
 			slog.Int("status", c.Writer.Status()),
+			slog.String("authorization", c.Request.Header.Get("Authorization")),
 			slog.Any("body", requestBody),
 		)
 	}

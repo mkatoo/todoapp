@@ -19,7 +19,7 @@ func main() {
 	}
 
 	// Migrate the schema
-	err = db.AutoMigrate(&models.User{}, &models.Token{}, &models.Todo{})
+	err = db.AutoMigrate(&models.User{}, &models.Token{}, &models.Task{})
 	if err != nil {
 		panic("failed to migrate database")
 	}
@@ -35,6 +35,7 @@ func main() {
 
 	handlers.RegisterUserHandler(router, db)
 	handlers.RegisterAuthHandler(router, db)
+	handlers.RegisterTaskHandler(router, db)
 
 	err = router.Run(":8080")
 	if err != nil {

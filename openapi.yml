@@ -38,6 +38,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /tasks:
+    get:
+      summary: Get all tasks
+      responses:
+        '200':
+          description: A list of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreateRequest'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /auth:
     post:
       summary: Authenticate a user
@@ -97,6 +130,27 @@ components:
         - name
         - email
         - password
+    Task:
+      type: object
+      properties:
+        content:
+          type: string
+        completed:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - content
+        - completed
+        - created_at
+    TaskCreateRequest:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
     Token:
       type: object
       properties:

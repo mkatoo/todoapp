@@ -28,3 +28,14 @@ func FindOrCreateToken(db *gorm.DB, userID uint) (*Token, error) {
 	}
 	return &existingToken, nil
 }
+
+func IsTokenExists(db *gorm.DB, tokenString string) (bool, error) {
+	var token Token
+	if err := db.Where("token = ?", tokenString).First(&token).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}

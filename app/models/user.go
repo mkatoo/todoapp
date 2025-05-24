@@ -10,7 +10,8 @@ type User struct {
 	Name           string `json:"name"`
 	Email          string `json:"email" gorm:"unique"`
 	HashedPassword []byte `json:"-"`
-	Todos          []Todo `json:"todos" gorm:"foreignKey:UserID"`
+	Tasks          []Task `json:"tasks" gorm:"foreignKey:UserID"`
+	Token          Token  `json:"token" gorm:"foreignKey:UserID"`
 }
 
 func (u *User) SetPassword(password string) error {
