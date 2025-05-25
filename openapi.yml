@@ -71,6 +71,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /tasks/{taskID}:
+    put:
+      summary: Update a task by ID
+      parameters:
+        - in: path
+          name: taskID
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdateRequest'
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /auth:
     post:
       summary: Authenticate a user
@@ -133,6 +161,8 @@ components:
     Task:
       type: object
       properties:
+        id:
+          type: integer
         content:
           type: string
         completed:
@@ -140,10 +170,15 @@ components:
         created_at:
           type: string
           format: date-time
+        updated_at:
+          type: string
+          format: date-time
       required:
+        - id
         - content
         - completed
         - created_at
+        - updated_at
     TaskCreateRequest:
       type: object
       properties:
@@ -151,6 +186,16 @@ components:
           type: string
       required:
         - content
+    TaskUpdateRequest:
+      type: object
+      properties:
+        content:
+          type: string
+        completed:
+          type: boolean
+      required:
+        - content
+        - completed
     Token:
       type: object
       properties:

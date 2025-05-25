@@ -23,11 +23,19 @@ type Task struct {
 	Completed bool      `json:"completed"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	Id        int       `json:"id"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // TaskCreateRequest defines model for TaskCreateRequest.
 type TaskCreateRequest struct {
 	Content string `json:"content"`
+}
+
+// TaskUpdateRequest defines model for TaskUpdateRequest.
+type TaskUpdateRequest struct {
+	Completed bool   `json:"completed"`
+	Content   string `json:"content"`
 }
 
 // Token defines model for Token.
@@ -54,6 +62,9 @@ type PostAuthJSONRequestBody = AuthRequest
 
 // PostTasksJSONRequestBody defines body for PostTasks for application/json ContentType.
 type PostTasksJSONRequestBody = TaskCreateRequest
+
+// PutTasksTaskIDJSONRequestBody defines body for PutTasksTaskID for application/json ContentType.
+type PutTasksTaskIDJSONRequestBody = TaskUpdateRequest
 
 // PostUsersJSONRequestBody defines body for PostUsers for application/json ContentType.
 type PostUsersJSONRequestBody = UserCreateRequest

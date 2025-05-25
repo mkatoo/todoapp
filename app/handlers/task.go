@@ -29,9 +29,11 @@ func RegisterTaskHandler(router *gin.Engine, db *gorm.DB) {
 		tasksResponse := make([]api.Task, 0, len(tasks))
 		for _, task := range tasks {
 			tasksResponse = append(tasksResponse, api.Task{
+				Id:        int(task.ID),
 				Completed: task.Completed,
 				Content:   task.Content,
 				CreatedAt: task.CreatedAt,
+				UpdatedAt: task.UpdatedAt,
 			})
 		}
 		c.JSON(http.StatusOK, tasksResponse)
@@ -61,10 +63,53 @@ func RegisterTaskHandler(router *gin.Engine, db *gorm.DB) {
 			return
 		}
 		taskResponse := api.Task{
+			Id:        int(task.ID),
 			Content:   task.Content,
 			Completed: task.Completed,
+			CreatedAt: task.CreatedAt,
+			UpdatedAt: task.UpdatedAt,
 		}
 		c.JSON(http.StatusCreated, taskResponse)
+	})
+	router.PUT("/tasks/:id", func(c *gin.Context) {
+		user, err := GetUserByToken(c, db)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, api.Error{Error: "failed to fetch user"})
+			return
+		}
+		if user == nil {
+			c.JSON(http.StatusUnauthorized, api.Error{Error: "unauthorized"})
+			return
+		}
+		var request api.TaskUpdateRequest
+		if err := c.ShouldBindJSON(&request); err != nil {
+			c.JSON(http.StatusBadRequest, api.Error{Error: "invalid input"})
+			return
+		}
+		taskID := c.Param("id")
+		var task models.Task
+		if err := db.Where("id = ? AND user_id = ?", taskID, user.ID).First(&task).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				c.JSON(http.StatusNotFound, api.Error{Error: "task not found"})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, api.Error{Error: "failed to fetch task"})
+			return
+		}
+		task.Content = request.Content
+		task.Completed = request.Completed
+		if err := db.Save(&task).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, api.Error{Error: "failed to update task"})
+			return
+		}
+		taskResponse := api.Task{
+			Id:        int(task.ID),
+			Content:   task.Content,
+			Completed: task.Completed,
+			CreatedAt: task.CreatedAt,
+			UpdatedAt: task.UpdatedAt,
+		}
+		c.JSON(http.StatusOK, taskResponse)
 	})
 }
 
