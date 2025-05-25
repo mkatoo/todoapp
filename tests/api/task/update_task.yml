@@ -1,0 +1,84 @@
+desc: Update Task
+runners:
+  req: http://localhost:8080
+
+vars:
+  user:
+    name: "Jane Doe"
+    email: "jane.doe@example.com"
+    password: "password123"
+    hashed_password: "$2a$10$/S0PaAs.5gkXcihuO51xC.pQUT/W76EyC3KoTmouhA7kDPjt5.qTS"
+    token: "token"
+  task_before:
+    content: "Before"
+    completed: false
+  task_after:
+    content: "After"
+    completed: true
+
+steps:
+  cleanup:
+    desc: Cleanup DB
+    include: ../utils/cleanup.yml
+
+  create_user:
+    desc: Create User on DB
+    include:
+      path: ../utils/create_user.yml
+      vars:
+        name: "{{ vars.user.name }}"
+        email: "{{ vars.user.email }}"
+        hashed_password: "{{ vars.user.hashed_password }}"
+
+  get_user_id:
+    desc: Get User from DB
+    include:
+      path: ../utils/get_user.yml
+      vars:
+        email: "{{ vars.user.email }}"
+    test: len(current.users) == 1
+    bind:
+      user_id: current.users[0].id
+
+  create_token:
+    desc: Create Token on DB
+    include:
+      path: ../utils/create_token.yml
+      vars:
+        user_id: "{{ user_id }}"
+        token: "{{ vars.user.token }}"
+
+  create_task:
+    desc: Create Task on DB
+    include:
+      path: ../utils/create_task.yml
+      vars:
+        user_id: "{{ user_id }}"
+        content: "{{ vars.task_before.content }}"
+        completed: "{{ vars.task_before.completed }}"
+
+  get_task_from_db:
+    desc: Get Task from DB
+    include:
+      path: ../utils/get_tasks.yml
+      vars:
+        user_id: "{{ user_id }}"
+    test: len(current.tasks) == 1
+    bind:
+      task_id: current.tasks[0].id
+
+  update_task:
+    desc: Update Task on DB
+    req:
+      /tasks/{{ task_id }}:
+        put:
+          headers:
+            Authorization: Bearer {{ vars.user.token }}
+          body:
+            application/json:
+              content: "{{ vars.task_after.content }}"
+              completed: "{{ vars.task_after.completed }}"
+    test: |
+      current.res.status == 200 &&
+      current.res.body.content == vars.task_after.content &&
+      current.res.body.completed == vars.task_after.completed

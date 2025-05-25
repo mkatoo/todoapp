@@ -1,3 +1,4 @@
 steps:
   - include: task/create_task.yml
   - include: task/get_tasks.yml
+  - include: task/update_task.yml

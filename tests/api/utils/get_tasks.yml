@@ -1,0 +1,14 @@
+desc: Get Tasks from DB
+runners:
+  db: postgres://postgres:password@localhost:5432/todoapp?sslmode=disable
+
+if: included
+steps:
+  get_tasks:
+    db:
+      query: |
+        SELECT id, content, completed
+        FROM tasks
+        WHERE user_id = CAST('{{ vars.user_id }}' AS INTEGER);
+    bind:
+      tasks: current.rows
