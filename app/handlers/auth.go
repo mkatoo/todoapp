@@ -22,7 +22,7 @@ func RegisterAuthHandler(router *gin.Engine, db *gorm.DB) {
 			return
 		}
 		if !exists {
-			c.JSON(http.StatusUnauthorized, api.Error{Error: "user does not exist"})
+			c.JSON(http.StatusUnauthorized, api.Error{Error: "invalid credentials"})
 			return
 		}
 

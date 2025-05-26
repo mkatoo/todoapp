@@ -1,0 +1,26 @@
+desc: Test Non-Existent User for Authentication
+runners:
+  req: http://localhost:8080
+
+vars:
+  user:
+    email: "nonexistent@example.com"
+    password: "password123"
+
+steps:
+  cleanup:
+    desc: Cleanup DB
+    include: ../utils/cleanup.yml
+
+  authenticate_nonexistent_user:
+    desc: Authenticate Non-Existent User
+    req:
+      /auth:
+        post:
+          body:
+            application/json:
+              email: "{{ vars.user.email }}"
+              password: "{{ vars.user.password }}"
+    test: |
+      current.res.status == 401 &&
+      current.res.body.error == "invalid credentials"
