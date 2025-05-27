@@ -108,3 +108,23 @@ steps:
     test: |
       current.res.status == 200 &&
       len(current.res.body) == 0
+
+  get_tasks_unauthenticated:
+    desc: Get Tasks Without Auth (fail)
+    req:
+      /tasks:
+        get: {}
+    test: |
+      current.res.status == 401 &&
+      current.res.body.error == "unauthorized"
+
+  get_tasks_invalid_token:
+    desc: Get Tasks With Invalid Token (fail)
+    req:
+      /tasks:
+        get:
+          headers:
+            Authorization: "Bearer invalid_token"
+    test: |
+      current.res.status == 401 &&
+      current.res.body.error == "unauthorized"
